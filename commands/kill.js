@@ -6,7 +6,8 @@ var deaths = [
   "[NAME1] sent John Wick to kill [NAME2]!",
   "[NAME1] pressed Ctrl+Alt+Del deleting [NAME2] from the Universe!",
   "[NAME1] threw the ban hammer at [NAME2] for spamming",
-  "[NAME2] stepped on a lego brick"
+  "[NAME2] stepped on a lego brick",
+  "[NAME2] got sat on by MARLENE"
 ];
 
 

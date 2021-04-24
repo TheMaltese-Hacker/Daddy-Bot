@@ -1,77 +1,41 @@
-const { MessageEmbed } = require('discord.js');
+const Discord = require('discord.js');
+const moment = require('moment');
 
-module.exports = {
-    name: "user-info",
-    category: "extra",
-    run: async (bot, message, args) => {
-        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member;
+module.exports.run = async (bot, message, args) => {
+    let userArray = message.content.split(" ");
+    let userArgs = userArray.slice(1);
+    let member = message.mentions.members.first() || message.guild.members.cache.get(userArgs[0]) || message.guild.members.cache.find(x => x.user.username.toLowerCase() === userArgs.slice(0).join(" ") || x.user.username === userArgs[0]) || message.member;
 
-        let status;
-        switch (user.presence.status) {
-            case "online":
-                status = "<:online:729181184193462285> online";
-                break;
-            case "dnd":
-                status = "<:dnd:729181212530442311> dnd";
-                break;
-            case "idle":
-                status = "<:idle:729181121933475931> idle";
-                break;
-            case "offline":
-                status = "<:offline:729181162182017051> offline";
-                break;
-        }
+    if (member.presence.status === 'dnd') member.presence.status = 'Do Not Disturb';
+    if (member.presence.status === 'online') member.presence.status = 'Online';
+    if (member.presence.status === 'idle') member.presence.status = 'Idle';
+    if (member.presence.status === 'offline') member.presence.status = 'offline';
 
-        const embed = new MessageEmbed()
-            .setTitle(`${user.user.username} stats`)
-            .setColor(`#f3f3f3`)
-            .setThumbnail(user.user.displayAvatarURL({dynamic : true}))
-            .addFields(
-                {
-                    name: "Name: ",
-                    value: user.user.username,
-                    inline: true
-                },
-                {
-                    name: "#️⃣ Discriminator: ",
-                    value: `#${user.user.discriminator}`,
-                    inline: true
-                },
-                {
-                    name: "🆔 ID: ",
-                    value: user.user.id,
-                },
-                {
-                    name: "Current Status: ",
-                    value: status,
-                    inline: true
-                },
-                {
-                    name: "Activity: ",
-                    value: user.presence.activities[0] ? user.presence.activities[0].name : `User isn't playing a game!`,
-                    inline: true
-                },
-                {
-                    name: 'Avatar link: ',
-                    value: `[Click Here](${user.user.displayAvatarURL()})`
-                },
-                {
-                    name: 'Creation Date: ',
-                    value: user.user.createdAt.toLocaleDateString("en-us"),
-                    inline: true
-                },
-                {
-                    name: 'Joined Date: ',
-                    value: user.joinedAt.toLocaleDateString("en-us"),
-                    inline: true
-                },
-                {
-                    name: 'User Roles: ',
-                    value: user.roles.cache.map(role => role.toString()).join(" ,"),
-                    inline: true
-                }
-            )
+    let x = Date.now() - member.createdAt;
+    let y = Date.now() - message.guild.members.cache.get(member.id).joinedAt;
+    const joined = Math.floor(y / 86400000);
 
-        await message.channel.send(embed)
-    }
+    const joineddate = moment.utc(member.joinedAt).format("dddd, MMMM Do YYYY, HH:mm:ss");
+    let status = member.presence.status;
+
+    const userEmbed = new Discord.MessageEmbed()
+    .setAuthor(member.user.tag, member.user.displayAvatarURL())
+    .setTimestamp()
+    .setColor('BLUE')
+    .setImage(member.user.displayAvatarURL())
+    .addField("Member ID", member.id)
+    .addField('Roles', `<@&${member._roles.join('> <@&')}>`)
+    .addField("Account Created On:", ` ${moment.utc(member.user.createdAt).format("dddd, MMMM Do YYYY")}`, true) 
+    .addField('Joined the server At', `${joineddate} \n> ${joined} day(S) Ago`)
+    .addField("Status", status)
+
+    message.channel.send(userEmbed);
+}
+
+module.exports.config = {
+    name: "memberinfo",
+    description: "Shows the information of a member/user",
+    usage: "?memberinfo",
+    accessableby: "Members",
+    aliases: ['userinfo']
 }

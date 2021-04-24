@@ -1,24 +1,46 @@
 const Discord = require("discord.js");
 const ms = require('ms');
 const fs = require('fs');
+const bot = new Discord.Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"]});
 const { prefix, token } = require('./config.json');
 const config = JSON.parse(fs.readFileSync("config.json", "utf-8"));
-const gamedig = require('gamedig');const { re } = require("mathjs");
+const gamedig = require('gamedig');
+const { re } = require("mathjs");
 const color = (config.color);
 const name = (config.name);
 const sChannel = (config.suggestionChannel);
 const SBon = (config.suggestionbot);
-const suggestprefix = (config.suggestionprefix)
+const suggestprefix = (config.suggestionprefix);
+require('./html.js');
+const welcome = require("./commands/welcome");
+const channelId = "830454769150984202";
+const DisTube = require("distube")
+bot.distube = new DisTube(bot, { searchSongs: false, emitNewSongOnly: true });
+bot.distube
+    .on("playSong", (message, queue, song) => message.channel.send(
+        `Playing \`${song.name}\` - \`${song.formattedDuration}\`\nRequested by: ${song.user}`
+	))
+	.on("addSong", (message, queue, song) => message.channel.send(
+        `Added ${song.name} - \`${song.formattedDuration}\` to the queue by ${song.user}`
+    ))
 
 
 
-const bot = new Discord.Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"]});
+
+
 bot.commands = new Discord.Collection();
 
 
 bot.on('ready', () => {
 	console.log('LavaBot is Online!')
-	bot.user.setPresence({
+   
+   welcome(bot);
+
+  
+
+
+
+  	bot.user.setPresence({
 		status: 'online',
 		activity: {
 			name: '"dad help"',
@@ -29,6 +51,76 @@ bot.on('ready', () => {
 
 
 
+
+bot.on('message', message => {
+  if (message.content === "cum") {
+    if (message.channel.id === "834078979983409222") {
+          message.react("🇨")
+          message.react("🇺")
+          message.react("🇲")
+          message.react("🇿")
+          message.react("🇴")
+          message.react("🇳")
+          message.react("🇪")
+  }
+  else message.channel.send(`<@${message.author.id}> You Can Say This Word In <#834078979983409222> channel`)
+  }
+  }
+)
+
+bot.on("message", message => {
+  const args = message.content.slice(prefix.length).trim().split(/ +/g);
+	  const cmd = args.shift().toLowerCase();
+    if (cmd === "serverinfo") {
+      message.react("👍")
+      message.channel.send(`<@${message.author.id}> I sent you a message regarding the server details`)
+      const serverembed = new Discord.MessageEmbed()
+      .setTitle("Server Info")
+      .addFields(
+      { name: 'Server IP', value: 'lavablocksmp.ddns.net:25584' },
+      { name: 'Dynmap URL', value: 'lavablocksmp.ddns.net:8192' }
+      )
+      message.author.send(serverembed)
+}})
+
+
+
+bot.on("message", message => {
+  let CreamerRole = message.member.roles.cache.find(r => r.name === "Creamers")
+    if (message.content === "creamdaddy") {
+    if (CreamerRole) {
+    const embedcream = new Discord.MessageEmbed()
+    .setTitle("Someone Creamed On Me")
+    .setDescription(`<@${message.author.id}> Fuckin Creamed On Me`)
+    .setFooter("Ahhhhhhhhh")
+
+    const embedcream2 = new Discord.MessageEmbed()
+    .setTitle('DADDY ITS EXPLODING')
+    .setDescription('LOOK AT THE CREAM')
+
+    message.channel.send(embedcream)
+    message.channel.send(embedcream2)
+    }
+    if (!CreamerRole) {
+    const returnembed = new Discord.MessageEmbed()
+    .setTitle('No Access')
+    .setDescription(`<@${message.author.id}> You do not have Access To This Command, React To The Creamers Reaction Role At <#832709116861612062>`)
+    message.channel.send(returnembed)
+    }
+}})
+
+bot.on('message', message => {
+  if (message.content === "liba") {
+    if (message.channel.id === "834078979983409222") {
+        message.react("🇨")
+        message.react("🇷")
+        message.react("🇪")
+        message.react("🇦")
+        message.react("🇲")
+    }
+  else message.channel.send(`${message.author.tag} You Can Say This Word In #spam channel`)
+  }
+})
 
 
 bot.on('message', message => {
@@ -119,11 +211,93 @@ bot.on('message', message => {
 
 
 
-bot.on('message', message => {
-	if (message.content === "script") {
-		message.reply('read #scripts channel')
-	}
+
+
+  bot.on("message", message => {
+
+  let ScriptShare = message.member.roles.cache.find(r => r.name === "Scripts")
+  const args = message.content.slice(prefix.length).trim().split(/ +/g);
+	  const cmd = args.shift().toLowerCase();
+    if (cmd === "scriptsend") {
+      message.delete()
+     const channelscript = bot.channels.cache.find(channel => channel.id === "785175965894443049");
+      if (ScriptShare) {
+      const embedscript = new Discord.MessageEmbed()
+      .setTitle(`${message.author.tag} Wants To Share A Script`)
+      .setDescription(args.slice(0).join(" "))
+
+  channelscript.send(embedscript)
+  console.log(message)
+}
+if (!ScriptShare) {
+  const embednoscript = new Discord.MessageEmbed()
+  .setTitle('Access Denied')
+  .setDescription(`<@${message.author.id}> You do not have Access To This Command, React To The Script Reaction Role At <#834441996797870122>`)
+  message.reply(embednoscript)
+} 
+}})
+
+bot.on("message", message => {
+  	const args = message.content.slice(prefix.length).trim().split(/ +/g);
+	  const cmd = args.shift().toLowerCase();
+    if (cmd === "json2embed") {
+    const targetChannel = message.mentions.channels.first()
+    if (!targetChannel) {
+      message.reply('Please specify a channel to send the embed in')
+      return
+    }
+
+    // removes the channel mention
+    args.shift()
+
+    try {
+      // get the JSON data
+      const json = JSON.parse(args.join(' '))
+      const { text = '' } = json
+
+      // send the embed
+      targetChannel.send(text, {
+        embed: json,
+      })
+    } catch (error) {
+      message.reply(`Invalid JSON ${error.message}`)
+    }}
 })
+
+bot.on('message', message => {
+  if (message.content === "ben") {
+    message.channel.send('https://cdn.discordapp.com/attachments/830768759672930344/831787631452880896/bb_2.png')
+   }  
+})
+ bot.on('message', message => {
+   if (message.content === "bb") {
+   if (message.member.hasPermission("ADMINISTRATOR")) {
+     message.channel.send('https://danielsblog296.files.wordpress.com/2021/04/bb.png')
+   }
+     if (!message.member.hasPermission("ADMINISTRATOR")) {
+       message.channel.send('You Do Not Have Permission To Use This Command')
+     }
+   
+   }
+ })
+
+
+
+
+
+
+bot.on("guildMemberRemove", member => {
+  const leavechannel = "830454769150984202";
+  const welcomeChannel = member.guild.channels.cache.get(leavechannel)
+  const logchannel = "833724020762607656";
+  const logsender = member.guild.channels.cache.get(logchannel)
+  const welcomeembed = new Discord.MessageEmbed()
+  .setThumbnail(`${member.displayAvatarURL}`)
+  .setDescription(`Oh no, it seems like ${member} has left`);
+  welcomeChannel.send(welcomeembed)
+ logsender.send (`${member} has left the server`)
+})
+
 
 bot.on('message', message => {
 	let args = message.content.substring(prefix.length).split(" ");
@@ -193,38 +367,13 @@ bot.on("message", async message => {
 	if (cmd === "reactm")  {
 	var reactionembed = new Discord.MessageEmbed()
 	.setTitle('Reaction Roles')
-	.setDescription(args.slice(1).join(" "))
+	.setDescription(args.slice(0).join(" "))
 	.setColor('RED')
 	let msgEmbed = await message.channel.send(reactionembed)
-	msgEmbed.react(args.slice(0).join(" "))
+	msgEmbed.react("🔓")
 	console.log(reactionembed)
 	}
-
-	if (cmd === "say") {
-
-		if (message.deletable) message.delete();
-
-		if (args.length < 0) return message.reply(`Nothing to say?`).then(m => m.delete(5000));
-
-
-		const roleColor = message.guild.me.displayHexColor === "#000000" ? "#ffffff" : message.guild.me.displayHexColor;
-
-
-		if (args[0].toLowerCase() === "embed") {
-			const exampleEmbed = new Discord.MessageEmbed()
-				.setDescription(args.slice(1).join(" "))
-				.setColor(roleColor)
-				.setTimestamp()
-				.setImage(bot.user.displayAvatarURL)
-				.setAuthor(message.author.username, message.author.displayAvatarURL);
-
-			message.channel.send(exampleEmbed);
-		} else {
-			message.channel.send(args.join(" "));
-		}
-	}
-});
-
+})
 bot.on('message', function (message) {
 	if (message.content == "bot:clear") {
 		if (message.member.hasPermission("CHANGE_NICKNAME")) {
@@ -291,6 +440,8 @@ bot.on('message', message => {
 	}
 });
 
+
+
 bot.on('message', message => {
 
 	if (!message.guild) return;
@@ -332,9 +483,32 @@ bot.on("messageReactionAdd", async (reaction, user) => {
 			await reaction.message.guild.members.cache.get(user.id).roles.add("830454343299498044")
 		}
 	}
-	if (!reaction.emoji.name === '🔓'){
-		await reaction.message.guild.members.cache.get(user.id).roles.remove("830454343299498044")
+  	if (reaction.message.channel.id === "832709116861612062") {
+		if (reaction.emoji.name === '⛏️'){
+			await reaction.message.guild.members.cache.get(user.id).roles.add("833406398825234442")
+		}
 	}
+    	if (reaction.message.channel.id === "832709116861612062") {
+		if (reaction.emoji.name === '🔓'){
+			await reaction.message.guild.members.cache.get(user.id).roles.add("835106787819520002")
+    }}
+    if (reaction.message.channel.id === "834441996797870122") {
+		if (reaction.emoji.name === '🔓'){
+		await reaction.message.guild.members.cache.get(user.id).roles.add("835194967546265650")
+    }}
+})
+
+bot.on("messageReactionRemove", async (reaction, user) => {
+  if (reaction.message.partial) await reaction.message.fetch();
+	if (reaction.partial) await reaction.fetch();
+
+	if (user.bot) return;
+	if (reaction.message.guild) return;
+
+    if (reaction.message.channel.id === "832709116861612062") {
+    if (reaction.emoji.name === '🔓') {
+		await reaction.message.guild.members.cache.get(user.id).roles.remove("830454343299498044")
+	}}
 })
 
 
@@ -425,6 +599,10 @@ bot.on("message", message => {
 
         };
 });
+
+
+
+
 
 
 

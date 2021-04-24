@@ -3,7 +3,7 @@ module.exports = {
     description: "Mute a member from your server",
 
     async run (client, message, args) {
-        if(!message.member.hasPermission("CHANGE_NICKNAME")) return message.channel.send("You don\'t have permission to run this command");
+        if(!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send("You don\'t have permission to run this command");
 
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
@@ -11,7 +11,7 @@ module.exports = {
 
         if(user.id === message.author.id) return message.channel.send("You cannot mute yourself you imbecile");
 
-        let role = message.guild.roles.cache.find(x => x.name === "[BD] Blacklisted");
+        let role = message.guild.roles.cache.find(x => x.name === "muted");
 
         if(!role) return message.channel.send("Cannot find the muted role");
 

@@ -2,7 +2,7 @@
 const Discord = module.require("discord.js");
 
 module.exports.run = async (client, message, args) => {
-    if (message.member.hasPermission("SEND_MESSAGES")) {
+    if (message.member.hasPermission("ADMINISTRATOR")) {
         message.delete();
         const taggedChannel = await message.mentions.channels.first();
 
