@@ -7,7 +7,8 @@ var deaths = [
   "[NAME1] pressed Ctrl+Alt+Del deleting [NAME2] from the Universe!",
   "[NAME1] threw the ban hammer at [NAME2] for spamming",
   "[NAME2] stepped on a lego brick",
-  "[NAME2] got sat on by MARLENE"
+  "[NAME2] got sat on by MARLENE",
+  "[NAME1] Send Jean Pierre To Kill [NAME2] Since He Was A Communist"
 ];
 
 

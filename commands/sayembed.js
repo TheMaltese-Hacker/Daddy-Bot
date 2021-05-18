@@ -18,7 +18,8 @@ module.exports = {
             
        
             const embed = new MessageEmbed()
-                .setDescription(args.slice(0).join(" "))
+                
+                .setDescription(args.slice(1).join(" "))
                 .setThumbnail(serverIcon)
                 .setColor("#A10505");
 

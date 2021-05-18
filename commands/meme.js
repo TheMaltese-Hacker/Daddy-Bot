@@ -1,45 +1,26 @@
-const randomPuppy = require('random-puppy');
-const Discord = module.require("discord.js");
+const Discord = require("discord.js")
+const Commando = require('discord.js-commando')
+const axios = require('axios')
 
-module.exports.run = async (client, message, args) => {  
+module.exports = class CatCommand extends Commando.Command {
+  constructor(client) {
+    super(client, {
+      name: 'meme',
+      group: 'misc',
+      memberName: 'cat',
+      description: 'Displays a random picture of a cat',
+    })
+  }
 
-    let reddit = [
-        "meme",
-        "minecraftmemes",
-        "dankmemes",
-        "dankmeme",
-        "wholesomememes",
-        "MemeEconomy",
-        "techsupportanimals",
-        "meirl",
-        "me_irl",
-        "2meirl4meirl",
-        "AdviceAnimals"
-    ]
-
-    let subreddit = reddit[Math.floor(Math.random() * reddit.length)];
-
-    message.channel.startTyping();
-
-    randomPuppy(subreddit).then(async url => {
-            await message.channel.send({
-                files: [{
-                    attachment: url,
-                    name: 'meme.png'
-                }]
-            }).then(() => message.channel.stopTyping());
-    }).catch(function (err)  {
-      message.channel.send({embed: {
-         color: 16734039,
-         description: "Something went wrong... :cry:"
-         }})
-      return;
-    });
-}
-
-module.exports.help = {
-    name: "meme",
-    description: "Sends a random meme",
-    usage: "meme",
-    type: "Fun" 
+  run = async (message) => {
+    axios
+      .get('https://api.imgflip.com/get_memes')
+      .then((res) => {
+        console.log('RES:', res.data[0].url)
+        message.reply(res.data[0].url)
+      })
+      .catch((err) => {
+        console.error('ERR:', err)
+      })
+  }
 }
